@@ -1,5 +1,5 @@
 {
-  "name": "docker-helper-electron-vue",
+  "name": "dockertron",
   "description": "Just a quick way to look at and run my docker images",
   "version": "0.1.0",
   "private": true,
