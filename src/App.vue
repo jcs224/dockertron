@@ -16,17 +16,17 @@
           </div>
           <button 
             v-if="ct.State == 'running'" 
-            class="bg-purple-500 text-white px-2"
+            class="bg-purple-500 text-white px-2 w-10"
             @click="stopContainer(ct.Id)"
           >
-            stop
+            <i class="fas fa-stop"></i>
           </button>
           <button 
             v-else 
-            class="bg-purple-500 text-white px-2"
+            class="bg-purple-500 text-white px-2 w-10"
             @click="startContainer(ct.Id)"
           >
-            start
+            <i class="fas fa-play"></i>
           </button>
         </li>
       </ul>
