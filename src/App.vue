@@ -47,7 +47,6 @@ export default {
   mounted() {
     var self = this
     ipcRenderer.on('list-containers-result', (event, arg) => {
-      console.log('run again')
       self.containers = arg
     })
 
