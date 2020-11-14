@@ -100,3 +100,20 @@ ipcMain.on('start-container', (event, arg) => {
     event.reply('container-started', arg)
   })
 })
+
+ipcMain.on('create-container', (event, arg) => {
+  let parsedArgs = JSON.parse(arg)
+
+  docker.createContainer({
+    Image: parsedArgs.image,
+    name: parsedArgs.name,
+  }).then((err, container) => {
+    event.reply('container-created', container)
+  })
+})
+
+ipcMain.on('delete-container', (event, arg) => {
+  docker.getContainer(arg).remove().then(() => {
+    event.reply('container-deleted', arg)
+  })
+})

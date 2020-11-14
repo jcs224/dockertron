@@ -28,19 +28,59 @@
           >
             <i class="fas fa-play"></i>
           </button>
+          <button 
+            class="bg-red-500 text-white px-2 w-10"
+            @click="deleteContainer(ct.Id)"
+          >
+            <i class="fas fa-trash"></i>
+          </button>
         </li>
       </ul>
+      <button 
+        class="bg-green-500 text-white w-full p-2 mt-2"
+        @click="createModalShowing = true"
+      ><i class="fas fa-plus mr-2"></i>Create</button>
     </div>
   </div>
+
+  <modal 
+    v-show="createModalShowing"
+    @close="createModalShowing = false"
+  >
+    <template v-slot:title>Create container</template>
+    <main>
+      <div>
+        <label class="block" for="">name</label>
+        <input type="text" v-model="newContainer.name" class="bg-gray-300 p-2">
+      </div>
+
+      <div class="mt-2">
+        <label class="block" for="">image</label>
+        <input type="text" v-model="newContainer.image" class="bg-gray-300 p-2">
+      </div>
+
+      <button class="bg-green-500 text-white p-2 mt-2" @click="createContainer">create</button>
+    </main>
+  </modal>
 </template>
 
 <script>
 import { ipcRenderer } from 'electron'
+import Modal from './Components/Modal'
 
 export default {
+  components: {
+    'modal': Modal
+  },
+
   data() {
     return {
-      containers: []
+      containers: [],
+      createModalShowing: false,
+      newContainer: {
+        name: '',
+        image: '',
+      }
     }
   },
   
@@ -58,6 +98,14 @@ export default {
       self.listContainers()
     })
 
+    ipcRenderer.on('container-created', () => {
+      self.listContainers()
+    })
+
+    ipcRenderer.on('container-deleted', () => {
+      self.listContainers()
+    })
+
     this.listContainers()
   },
 
@@ -72,6 +120,21 @@ export default {
 
     startContainer(id) {
       ipcRenderer.send('start-container', id)
+    },
+
+    createContainer() {
+      ipcRenderer.send('create-container', JSON.stringify(this.newContainer))
+      this.clearNewContainerForm()
+      this.createModalShowing = false
+    },
+
+    deleteContainer(id) {
+      ipcRenderer.send('delete-container', id)
+    },
+
+    clearNewContainerForm() {
+      this.newContainer.name = ''
+      this.newContainer.image = ''
     }
   }
 }
