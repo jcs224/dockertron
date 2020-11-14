@@ -1,7 +1,9 @@
 {
   "name": "docker-helper-electron-vue",
+  "description": "Just a quick way to look at and run my docker images",
   "version": "0.1.0",
   "private": true,
+  "author": "Joe Sweeney",
   "scripts": {
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
