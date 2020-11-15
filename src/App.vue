@@ -43,8 +43,8 @@
     </div>
   </div>
 
-  <modal 
-    v-show="createModalShowing"
+  <modal
+    :showing="createModalShowing"
     @close="createModalShowing = false"
   >
     <template v-slot:title>Create container</template>

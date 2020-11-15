@@ -1,28 +1,60 @@
 <template>
-  <div class="fixed z-10 inset-0 z-40 overflow-y-auto">
+  <transition :duration="{leave: 200}">
+  <div v-show="showing" class="fixed z-10 inset-0 z-40 overflow-y-auto">
     <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
-      <div 
-        class="fixed inset-0 transition-opacity"
-        @click="$emit('close')"
+      <transition
+        enter-active-class="ease-out duration-300"
+        enter-from-class="opacity-0"
+        enter-to-class="opacity-100"
+        leave-active-class="ease-in duration-200"
+        leave-from-class="opacity-100"
+        leave-to-class="opacity-0"
       >
-        <div class="absolute inset-0 bg-black opacity-50"></div>
-      </div>
-      <span class="hidden sm:inline-block sm:align-middle sm:h-screen"></span>&#8203;
-      <div class="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full" role="dialog" aria-modal="true" aria-labelledby="modal-headline">
-        <div class="bg-white p-4">
-          <div class="flex justify-between">
-            <h1 class="text-2xl"><slot name="title"></slot></h1>
-            <i @click="$emit('close')" class="fas fa-times"></i>
-          </div>
-         <slot />
+        <div
+          v-show="showing"
+          class="fixed inset-0 transition-opacity"
+          @click="$emit('close')"
+        >
+          <div class="absolute inset-0 bg-black opacity-50"></div>
         </div>
-      </div>
+      </transition>
+      <span class="hidden sm:inline-block sm:align-middle sm:h-screen"></span>&#8203;
+      <transition
+        enter-active-class="ease-out duration-300"
+        enter-from-class="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+        enter-to-class="opacity-100 translate-y-0 sm:scale-100"
+        leave-active-class="ease-in duration-200"
+        leave-from-class="opacity-100 translate-y-0 sm:scale-100"
+        leave-to-class="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+      >
+        <div 
+          v-show="showing"
+          class="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full" 
+          role="dialog" 
+          aria-modal="true" 
+          aria-labelledby="modal-headline"
+        >
+          <div class="bg-white p-4">
+            <div class="flex justify-between">
+              <h1 class="text-2xl"><slot name="title"></slot></h1>
+              <i @click="$emit('close')" class="fas fa-times"></i>
+            </div>
+          <slot />
+          </div>
+        </div>
+      </transition>
     </div>
   </div>
+  </transition>
 </template>
 
 <script>
 export default {
-
+  props: {
+    showing: {
+      type: Boolean,
+      default: false
+    }
+  }
 }
 </script>
