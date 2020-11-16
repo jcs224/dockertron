@@ -18,19 +18,17 @@
           >
             {{ ct.Names[0].slice(1) }}
           </div>
-          <button 
-            v-if="ct.State == 'running'" 
+          <button
             class="bg-purple-500 text-white px-2 w-10"
-            @click="stopContainer(ct.Id)"
+            @click="startOrStopContainer(ct.Id)"
           >
-            <i class="fas fa-stop"></i>
-          </button>
-          <button 
-            v-else 
-            class="bg-purple-500 text-white px-2 w-10"
-            @click="startContainer(ct.Id)"
-          >
-            <i class="fas fa-play"></i>
+            <template v-if="stateChanging.includes(ct.Id)">
+              <i class="fas fa-spinner fa-spin"></i>
+            </template>
+            <template v-else>
+              <i v-if="ct.State == 'running'" class="fas fa-stop"></i>
+              <i v-else class="fas fa-play"></i>
+            </template>
           </button>
           <button 
             class="bg-red-500 text-white px-2 w-10"
@@ -136,7 +134,8 @@ export default {
         name: '',
         image: '',
         ports: []
-      }
+      },
+      stateChanging: [],
     }
   },
   
@@ -146,11 +145,15 @@ export default {
       self.containers = arg
     })
 
-    ipcRenderer.on('container-stopped', () => {
+    ipcRenderer.on('container-stopped', (event, arg) => {
+      let ctStateIndex = self.stateChanging.findIndex(ctId => ctId == arg)
+      self.stateChanging.splice(ctStateIndex, 1)
       self.listContainers()
     })
 
-    ipcRenderer.on('container-started', () => {
+    ipcRenderer.on('container-started', (event, arg) => {
+      let ctStateIndex = self.stateChanging.findIndex(ctId => ctId == arg)
+      self.stateChanging.splice(ctStateIndex, 1)
       self.listContainers()
     })
 
@@ -176,6 +179,16 @@ export default {
 
     startContainer(id) {
       ipcRenderer.send('start-container', id)
+    },
+
+    startOrStopContainer(id) {
+      this.stateChanging.push(id)
+
+      if (this.containers.filter(ct => id == ct.Id)[0].State == 'running') {
+        this.stopContainer(id)
+      } else {
+        this.startContainer(id)
+      }
     },
 
     createContainer() {

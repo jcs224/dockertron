@@ -126,7 +126,9 @@ ipcMain.on('create-container', (event, arg) => {
 })
 
 ipcMain.on('delete-container', (event, arg) => {
-  docker.getContainer(arg).remove().then(() => {
+  docker.getContainer(arg).stop().then(() => {
+    return docker.getContainer(arg).remove()
+  }).then(() => {
     event.reply('container-deleted', arg)
   })
 })
