@@ -190,7 +190,8 @@ export default {
 
     clearNewContainerForm() {
       this.newContainer.name = ''
-      this.newContainer.image = ''
+      this.newContainer.image = '',
+      this.newContainer.ports = []
     },
 
     addPort() {
