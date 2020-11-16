@@ -55,15 +55,15 @@
     <main>
       <div>
         <label class="block" for="">name</label>
-        <input type="text" v-model="newContainer.name" class="bg-gray-300 p-2">
+        <input type="text" v-model="newContainer.name" class="bg-gray-300 p-2 w-full">
       </div>
 
       <div class="mt-2">
         <label class="block" for="">image</label>
-        <input type="text" v-model="newContainer.image" class="bg-gray-300 p-2">
+        <input type="text" v-model="newContainer.image" class="bg-gray-300 p-2 w-full">
       </div>
 
-      <button class="bg-green-500 text-white p-2 mt-2" @click="createContainer">create</button>
+      <button class="bg-green-500 text-white p-2 mt-4" @click="createContainer">create</button>
     </main>
   </modal>
 </template>
