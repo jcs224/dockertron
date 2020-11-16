@@ -104,9 +104,24 @@ ipcMain.on('start-container', (event, arg) => {
 ipcMain.on('create-container', (event, arg) => {
   let parsedArgs = JSON.parse(arg)
 
+  console.log(parsedArgs)
+
+  let parsedPorts = {}
+
+  for (let port of parsedArgs.ports) {
+    parsedPorts[`${port.container}/tcp`] = [
+      {
+        HostPort: port.host
+      }
+    ]
+  }
+
   docker.createContainer({
     Image: parsedArgs.image,
     name: parsedArgs.name,
+    HostConfig: {
+      PortBindings: parsedPorts
+    }
   }).then((err, container) => {
     event.reply('container-created', container)
   })

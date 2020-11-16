@@ -63,6 +63,40 @@
         <input type="text" v-model="newContainer.image" class="bg-gray-300 p-2 w-full">
       </div>
 
+      <div class="mt-2">
+        <label class="block" for="">ports</label>
+        <template
+          v-for="(port, index) in newContainer.ports"
+          :key="index"        
+        >
+          <div class="flex">
+            <div class="flex-1">
+              <label class="block">host</label>
+              <input type="text" v-model="newContainer.ports[index].host" class="bg-gray-300 p-2 w-full">
+            </div>
+            <div class="flex items-center mt-6 mx-2">
+              <i class="fas fa-arrow-right"></i>
+            </div>
+            <div class="flex-1">
+              <label class="block">container</label>
+              <input type="text" v-model="newContainer.ports[index].container" class="bg-gray-300 p-2 w-full">
+            </div>
+            <div class="flex items-end ml-2">
+              <button
+                class="bg-red-500 text-white h-10 w-10"
+                @click="removePort(index)"
+              >
+                <i class="fas fa-times"></i>
+              </button>
+            </div>
+          </div>
+        </template>
+        <button 
+          @click="addPort"
+          class="bg-gray-700 text-white p-2 mt-4"
+        ><i class="fas fa-plus mr-2"></i>add port pair</button>
+      </div>
+
       <button class="bg-green-500 text-white p-2 mt-4" @click="createContainer">create</button>
     </main>
   </modal>
@@ -101,6 +135,7 @@ export default {
       newContainer: {
         name: '',
         image: '',
+        ports: []
       }
     }
   },
@@ -156,6 +191,17 @@ export default {
     clearNewContainerForm() {
       this.newContainer.name = ''
       this.newContainer.image = ''
+    },
+
+    addPort() {
+      this.newContainer.ports.push({
+        'host': '',
+        'container': '',
+      })
+    },
+
+    removePort(index) {
+      this.newContainer.ports.splice(index, 1)
     }
   }
 }
