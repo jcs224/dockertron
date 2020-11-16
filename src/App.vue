@@ -13,7 +13,7 @@
           class="container-list-item mt-2 flex"
         >
           <div 
-            class="flex-1 p-2 rounded-l"
+            class="flex-1 p-2 rounded-l transition duration-200 ease-in-out"
             :class="[ct.State == 'running' ? 'bg-white' : 'bg-gray-400']"
           >
             {{ ct.Names[0].slice(1) }}
