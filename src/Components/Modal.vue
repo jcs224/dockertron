@@ -29,7 +29,7 @@
       >
         <div 
           v-show="showing"
-          class="w-full bg-white p-4 inline-block align-bottom text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg" 
+          class="w-full bg-white rounded p-4 inline-block align-bottom text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg" 
           role="dialog" 
           aria-modal="true" 
           aria-labelledby="modal-headline"

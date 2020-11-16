@@ -13,7 +13,7 @@
           class="container-list-item mt-2 flex"
         >
           <div 
-            class="flex-1 p-2"
+            class="flex-1 p-2 rounded-l"
             :class="[ct.State == 'running' ? 'bg-white' : 'bg-gray-400']"
           >
             {{ ct.Names[0].slice(1) }}
@@ -31,7 +31,7 @@
             </template>
           </button>
           <button 
-            class="bg-red-500 text-white px-2 w-10"
+            class="bg-red-500 text-white px-2 w-10 rounded-r"
             @click="deleteContainer(ct.Id)"
           >
             <i class="fas fa-trash"></i>
@@ -39,7 +39,7 @@
         </li>
       </transition-group>
       <button 
-        class="bg-green-500 text-white w-full p-2 mt-2"
+        class="bg-green-500 text-white w-full p-2 mt-2 rounded"
         @click="createModalShowing = true"
       ><i class="fas fa-plus mr-2"></i>Create</button>
     </div>
@@ -53,12 +53,12 @@
     <main>
       <div>
         <label class="block" for="">name</label>
-        <input type="text" v-model="newContainer.name" class="bg-gray-300 p-2 w-full">
+        <input type="text" v-model="newContainer.name" class="bg-gray-300 p-2 w-full rounded">
       </div>
 
       <div class="mt-2">
         <label class="block" for="">image</label>
-        <input type="text" v-model="newContainer.image" class="bg-gray-300 p-2 w-full">
+        <input type="text" v-model="newContainer.image" class="bg-gray-300 p-2 w-full rounded">
       </div>
 
       <div class="mt-2">
@@ -70,18 +70,18 @@
           <div class="flex">
             <div class="flex-1">
               <label class="block">host</label>
-              <input type="text" v-model="newContainer.ports[index].host" class="bg-gray-300 p-2 w-full">
+              <input type="text" v-model="newContainer.ports[index].host" class="bg-gray-300 p-2 w-full rounded">
             </div>
             <div class="flex items-center mt-6 mx-2">
               <i class="fas fa-arrow-right"></i>
             </div>
             <div class="flex-1">
               <label class="block">container</label>
-              <input type="text" v-model="newContainer.ports[index].container" class="bg-gray-300 p-2 w-full">
+              <input type="text" v-model="newContainer.ports[index].container" class="bg-gray-300 p-2 w-full rounded">
             </div>
             <div class="flex items-end ml-2">
               <button
-                class="bg-red-500 text-white h-10 w-10"
+                class="bg-red-500 text-white h-10 w-10 rounded"
                 @click="removePort(index)"
               >
                 <i class="fas fa-times"></i>
@@ -91,11 +91,11 @@
         </template>
         <button 
           @click="addPort"
-          class="bg-gray-700 text-white p-2 mt-4"
+          class="bg-gray-700 text-white p-2 mt-4 rounded"
         ><i class="fas fa-plus mr-2"></i>add port pair</button>
       </div>
 
-      <button class="bg-green-500 text-white p-2 mt-4" @click="createContainer">create</button>
+      <button class="bg-green-500 text-white p-2 mt-4 rounded" @click="createContainer">create</button>
     </main>
   </modal>
 </template>
