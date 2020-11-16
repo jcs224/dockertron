@@ -2,11 +2,15 @@
   <div class="bg-gray-200 h-screen">
     <div class="p-2">
       <h1 class="text-center text-2xl">Containers</h1>
-      <ul>
+      <transition-group 
+        name="container-list" 
+        tag="ul"
+        class="relative"
+      >
         <li 
           v-for="ct in containers" 
           :key="ct.Id"
-          class="mt-2 flex"
+          class="container-list-item mt-2 flex"
         >
           <div 
             class="flex-1 p-2"
@@ -35,7 +39,7 @@
             <i class="fas fa-trash"></i>
           </button>
         </li>
-      </ul>
+      </transition-group>
       <button 
         class="bg-green-500 text-white w-full p-2 mt-2"
         @click="createModalShowing = true"
@@ -63,6 +67,23 @@
     </main>
   </modal>
 </template>
+
+<style>
+.container-list-item {
+  transition: all 0.3s ease;
+}
+
+.container-list-enter-from,
+.container-list-leave-to {
+  opacity: 0;
+  transform: translateY(-30px);
+}
+
+.container-list-leave-active {
+  position: absolute;
+  width: 100%;
+}
+</style>
 
 <script>
 import { ipcRenderer } from 'electron'
