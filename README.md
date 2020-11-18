@@ -1,8 +1,8 @@
 # dockertron
 
 ## Prerequisites
-Node
-Yarn
+- [Node](https://nodejs.org)
+- [Yarn](https://classic.yarnpkg.com)
 
 ## Setup / Run
 
