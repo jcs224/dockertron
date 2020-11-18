@@ -101,6 +101,46 @@
         ><i class="fas fa-plus mr-2"></i>add port pair</button>
       </div>
 
+      <div class="mt-2">
+        <label class="block" for="">environment variables</label>
+        <transition-group
+          name="env-list"
+          tag="div"
+          class="relative"
+        >
+          <template
+            v-for="(port, index) in newContainer.envVariables"
+            :key="index"        
+          >
+            <div class="flex env-list-item">
+              <div class="flex-1">
+                <label class="block">key</label>
+                <input type="text" v-model="newContainer.envVariables[index].key" class="bg-gray-300 p-2 w-full rounded">
+              </div>
+              <div class="flex items-center mt-6 mx-2">
+                <i class="fas fa-arrow-right"></i>
+              </div>
+              <div class="flex-1">
+                <label class="block">value</label>
+                <input type="text" v-model="newContainer.envVariables[index].value" class="bg-gray-300 p-2 w-full rounded">
+              </div>
+              <div class="flex items-end ml-2">
+                <button
+                  class="bg-red-500 text-white h-10 w-10 rounded"
+                  @click="removeEnv(index)"
+                >
+                  <i class="fas fa-times"></i>
+                </button>
+              </div>
+            </div>
+          </template>
+        </transition-group>
+        <button 
+          @click="addEnv"
+          class="bg-gray-700 text-white p-2 mt-4 rounded"
+        ><i class="fas fa-plus mr-2"></i>add environment variable</button>
+      </div>
+
       <button class="bg-green-500 text-white p-2 mt-4 rounded" @click="createContainer">create</button>
     </main>
   </modal>
@@ -136,6 +176,21 @@
   position: absolute;
   width: 100%;
 }
+
+.env-list-item {
+  transition: all 0.2s ease;
+}
+
+.env-list-enter-from,
+.env-list-leave-to {
+  opacity: 0;
+  transform: translateY(-10px);
+}
+
+.env-list-leave-active {
+  position: absolute;
+  width: 100%;
+}
 </style>
 
 <script>
@@ -154,7 +209,8 @@ export default {
       newContainer: {
         name: '',
         image: '',
-        ports: []
+        ports: [],
+        envVariables: [],
       },
       stateChanging: [],
     }
@@ -226,6 +282,7 @@ export default {
       this.newContainer.name = ''
       this.newContainer.image = '',
       this.newContainer.ports = []
+      this.newContainer.envVariables = []
     },
 
     addPort() {
@@ -237,6 +294,17 @@ export default {
 
     removePort(index) {
       this.newContainer.ports.splice(index, 1)
+    },
+
+    addEnv() {
+      this.newContainer.envVariables.push({
+        'key': '',
+        'value': '',
+      })
+    },
+
+    removeEnv(index) {
+      this.newContainer.envVariables.splice(index, 1)
     }
   }
 }
