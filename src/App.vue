@@ -63,32 +63,38 @@
 
       <div class="mt-2">
         <label class="block" for="">ports</label>
-        <template
-          v-for="(port, index) in newContainer.ports"
-          :key="index"        
+        <transition-group
+          name="port-list"
+          tag="div"
+          class="relative"
         >
-          <div class="flex">
-            <div class="flex-1">
-              <label class="block">host</label>
-              <input type="text" v-model="newContainer.ports[index].host" class="bg-gray-300 p-2 w-full rounded">
+          <template
+            v-for="(port, index) in newContainer.ports"
+            :key="index"        
+          >
+            <div class="flex port-list-item">
+              <div class="flex-1">
+                <label class="block">host</label>
+                <input type="text" v-model="newContainer.ports[index].host" class="bg-gray-300 p-2 w-full rounded">
+              </div>
+              <div class="flex items-center mt-6 mx-2">
+                <i class="fas fa-arrow-right"></i>
+              </div>
+              <div class="flex-1">
+                <label class="block">container</label>
+                <input type="text" v-model="newContainer.ports[index].container" class="bg-gray-300 p-2 w-full rounded">
+              </div>
+              <div class="flex items-end ml-2">
+                <button
+                  class="bg-red-500 text-white h-10 w-10 rounded"
+                  @click="removePort(index)"
+                >
+                  <i class="fas fa-times"></i>
+                </button>
+              </div>
             </div>
-            <div class="flex items-center mt-6 mx-2">
-              <i class="fas fa-arrow-right"></i>
-            </div>
-            <div class="flex-1">
-              <label class="block">container</label>
-              <input type="text" v-model="newContainer.ports[index].container" class="bg-gray-300 p-2 w-full rounded">
-            </div>
-            <div class="flex items-end ml-2">
-              <button
-                class="bg-red-500 text-white h-10 w-10 rounded"
-                @click="removePort(index)"
-              >
-                <i class="fas fa-times"></i>
-              </button>
-            </div>
-          </div>
-        </template>
+          </template>
+        </transition-group>
         <button 
           @click="addPort"
           class="bg-gray-700 text-white p-2 mt-4 rounded"
@@ -112,6 +118,21 @@
 }
 
 .container-list-leave-active {
+  position: absolute;
+  width: 100%;
+}
+
+.port-list-item {
+  transition: all 0.2s ease;
+}
+
+.port-list-enter-from,
+.port-list-leave-to {
+  opacity: 0;
+  transform: translateY(-10px);
+}
+
+.port-list-leave-active {
   position: absolute;
   width: 100%;
 }
