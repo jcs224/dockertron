@@ -26,6 +26,10 @@
         leave-active-class="ease-in duration-200"
         leave-from-class="opacity-100 translate-y-0 sm:scale-100"
         leave-to-class="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+
+        @before-enter="beforeEnter"
+        @enter="duringEnter"
+        @after-enter="afterEnter"
       >
         <div 
           v-show="showing"
@@ -52,6 +56,20 @@ export default {
     showing: {
       type: Boolean,
       default: false
+    }
+  },
+
+  methods: {
+    beforeEnter: function() {
+      this.$emit('before-modal-open')
+    },
+
+    duringEnter: function() {
+      this.$emit('during-modal-open')
+    },
+
+    afterEnter: function() {
+      this.$emit('after-modal-open')
     }
   }
 }

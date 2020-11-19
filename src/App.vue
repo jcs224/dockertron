@@ -48,12 +48,13 @@
   <modal
     :showing="createModalShowing"
     @close="createModalShowing = false"
+    @after-modal-open="afterCreateModalOpen"
   >
     <template v-slot:title>Create container</template>
     <main>
       <div>
         <label class="block" for="">name</label>
-        <input type="text" v-model="newContainer.name" class="bg-gray-300 p-2 w-full rounded">
+        <input ref="new-container-name" type="text" v-model="newContainer.name" class="bg-gray-300 p-2 w-full rounded">
       </div>
 
       <div class="mt-2">
@@ -305,6 +306,10 @@ export default {
 
     removeEnv(index) {
       this.newContainer.envVariables.splice(index, 1)
+    },
+
+    afterCreateModalOpen() {
+      this.$refs['new-container-name'].focus()
     }
   }
 }
