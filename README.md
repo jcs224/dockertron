@@ -1,5 +1,7 @@
 # dockertron
 
+![Dockertron promo](promo/dockertron.gif)
+
 ## Prerequisites
 - [Node](https://nodejs.org)
 - [Yarn](https://classic.yarnpkg.com)
