@@ -3,6 +3,7 @@
 ![Dockertron promo](promo/dockertron.gif)
 
 ## Prerequisites
+- [Docker Desktop](https://www.docker.com/products/docker-desktop)
 - [Node](https://nodejs.org)
 - [Yarn](https://classic.yarnpkg.com)
 
