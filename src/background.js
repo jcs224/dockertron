@@ -105,6 +105,7 @@ ipcMain.on('create-container', (event, arg) => {
   let parsedArgs = JSON.parse(arg)
 
   let parsedPorts = {}
+  let parsedExposedPorts = {}
   let parsedEnvs = []
 
   for (let port of parsedArgs.ports) {
@@ -113,6 +114,8 @@ ipcMain.on('create-container', (event, arg) => {
         HostPort: port.host
       }
     ]
+
+    parsedExposedPorts[`${port.container}/tcp`] = {}
   }
 
   for (let env of parsedArgs.envVariables) {
@@ -122,6 +125,7 @@ ipcMain.on('create-container', (event, arg) => {
   docker.createContainer({
     Image: parsedArgs.image,
     name: parsedArgs.name,
+    ExposedPorts: parsedExposedPorts,
     HostConfig: {
       PortBindings: parsedPorts
     },
