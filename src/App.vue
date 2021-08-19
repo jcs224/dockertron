@@ -45,10 +45,12 @@
     </div>
   </div>
 
-  <modal
-    :showing="createModalShowing"
+  <o-modal
+    :active="createModalShowing"
     @close="createModalShowing = false"
-    @after-modal-open="afterCreateModalOpen"
+    @active="afterCreateModalOpen"
+    contentClass="w-1/2 p-3 rounded"
+    mobileClass="p-3"
   >
     <template v-slot:title>Create container</template>
     <main>
@@ -144,7 +146,7 @@
 
       <button class="bg-green-500 text-white p-2 mt-4 rounded" @click="createContainer">create</button>
     </main>
-  </modal>
+  </o-modal>
 </template>
 
 <style>
@@ -192,16 +194,17 @@
   position: absolute;
   width: 100%;
 }
+
+.o-modal__overlay {
+  @apply bg-black opacity-50 !important
+}
+
 </style>
 
 <script>
 import { ipcRenderer } from 'electron'
-import Modal from './Components/Modal'
 
 export default {
-  components: {
-    'modal': Modal
-  },
 
   data() {
     return {
