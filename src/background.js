@@ -37,6 +37,30 @@ async function createWindow() {
     // Load the index.html when not in development
     win.loadURL('app://./index.html')
   }
+
+  docker.getEvents({}, (err, data) => {
+    if (err) {
+      console.log(err.message)
+    } else {
+      data.on('data', function(chunk) {
+        let event = JSON.parse(chunk.toString('utf8'))
+        let parsedEvent = {
+          id: event.Actor.ID,
+          status: event.status,
+          action: event.Action
+        }
+
+        switch (parsedEvent.status) {
+          case 'start':
+            win.webContents.send('container-started', parsedEvent.id)
+            break
+          case 'stop':
+            win.webContents.send('container-stopped', parsedEvent.id)
+            break
+        }
+      })
+    }
+  })
 }
 
 // Quit when all windows are closed.
@@ -149,7 +173,6 @@ ipcMain.on('create-container', async (event, arg) => {
   }).then((err, container) => {
     event.reply('container-created', container)
   }).catch(err => {
-    console.log('can no create container')
     event.reply('container-creation-failed', JSON.stringify(err))
   })
 })
@@ -201,7 +224,6 @@ async function downloadImage(imageName, event = null) {
   return new Promise((resolve, reject) => {
     docker.modem.followProgress(stream, (finishedErr, output) => {
       if (finishedErr) {
-        console.log('image download no worky')
         if (thisEvent) thisEvent.reply('image-download-failed', JSON.stringify(finishedErr))
         return reject(finishedErr)
       } else {
@@ -209,7 +231,6 @@ async function downloadImage(imageName, event = null) {
         return resolve(output)
       }
     }, (progressEvent) => {
-      console.log(progressEvent)
       if (thisEvent) thisEvent.reply('downloading-image', JSON.stringify({
         image: imageName,
         payload: progressEvent
