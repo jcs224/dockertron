@@ -40,14 +40,14 @@
       </transition-group>
       <button 
         class="bg-green-500 text-white w-full p-2 mt-2 rounded"
-        @click="createModalShowing = true"
+        @click="createContainerDialog = true"
       ><i class="fas fa-plus mr-2"></i>Create</button>
     </div>
   </div>
 
   <o-modal
-    :active="createModalShowing"
-    @close="createModalShowing = false"
+    :active="createContainerDialog"
+    @close="createContainerDialog = false"
     @active="afterCreateModalOpen"
     contentClass="w-1/2 p-3 rounded"
     mobileClass="p-3"
@@ -62,6 +62,16 @@
       <div class="mt-2">
         <label class="block" for="">image</label>
         <input type="text" v-model="newContainer.image" class="bg-gray-300 p-2 w-full rounded">
+      </div>
+
+      <div 
+        v-if="isImageDownloading"
+        class="mt-3"
+      >
+        Downloading {{ imageDownloadingName }}...
+        <div class="bg-blue-200 flex w-full h-3 mt-1 relative rounded">
+          <div class="bg-blue-500 rounded transition duration-200 ease-in-out" :style="`width: ${imageDownloadingPercentage}%`"></div>
+        </div>
       </div>
 
       <div class="mt-2">
@@ -144,7 +154,17 @@
         ><i class="fas fa-plus mr-2"></i>add environment variable</button>
       </div>
 
-      <button class="bg-green-500 text-white p-2 mt-4 rounded" @click="createContainer">create</button>
+      <button 
+        class="text-white p-2 mt-4 rounded" 
+        :disabled="isCreatingContainer"
+        @click="createContainer"
+        :class="[
+          isCreatingContainer ? 'bg-green-400 cursor-wait' : 'bg-green-500'
+        ]"
+        >
+          <span v-if="isCreatingContainer"><i class="fas fa-spinner fa-spin"></i></span>
+          <span v-else>create</span>
+        </button>
     </main>
   </o-modal>
 </template>
@@ -209,7 +229,6 @@ export default {
   data() {
     return {
       containers: [],
-      createModalShowing: false,
       newContainer: {
         name: '',
         image: '',
@@ -217,6 +236,30 @@ export default {
         envVariables: [],
       },
       stateChanging: [],
+      createContainerDialog: false,
+      isImageDownloading: false,
+      imageDownloading: {},
+      isCreatingContainer: false,
+      deletingContainerId: null,
+    }
+  },
+
+  computed: {
+    imageDownloadingPercentage() {
+      if (this.imageDownloading && this.imageDownloading.payload && this.imageDownloading.payload.progressDetail) {
+        const progress = this.imageDownloading.payload.progressDetail
+        return (progress.current / progress.total) * 100
+      } else {
+        return 0
+      }
+    },
+
+    imageDownloadingName() {
+      if (this.imageDownloading && this.imageDownloading.image) {
+        return this.imageDownloading.image
+      } else {
+        return ''
+      }
     }
   },
   
@@ -239,11 +282,38 @@ export default {
     })
 
     ipcRenderer.on('container-created', () => {
+      this.clearNewContainerForm()
+      this.isCreatingContainer = false
+      this.createContainerDialog = false
       self.listContainers()
     })
 
+    ipcRenderer.on('container-creation-failed', (event, arg) => {
+      this.isCreatingContainer = false
+      const errParsed = JSON.parse(arg)
+      alert(errParsed.reason)
+    })
+
     ipcRenderer.on('container-deleted', () => {
+      this.deletingContainerId = null
       self.listContainers()
+    })
+
+    ipcRenderer.on('downloading-image', (event, arg) => {
+      const parsedArg = JSON.parse(arg)
+
+      this.isImageDownloading = true
+      this.imageDownloading = parsedArg
+      console.log(this.imageDownloading)
+    })
+
+    ipcRenderer.on('image-downloaded', () => {
+      this.isImageDownloading = false
+      this.imageDownloading = null
+    })
+
+    ipcRenderer.on('image-download-failed', (event, arg) => {
+      alert(JSON.parse(arg))
     })
 
     this.listContainers()
@@ -273,12 +343,12 @@ export default {
     },
 
     createContainer() {
+      this.isCreatingContainer = true
       ipcRenderer.send('create-container', JSON.stringify(this.newContainer))
-      this.clearNewContainerForm()
-      this.createModalShowing = false
     },
 
     deleteContainer(id) {
+      this.deletingContainerId = id
       ipcRenderer.send('delete-container', id)
     },
 

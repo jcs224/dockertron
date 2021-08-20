@@ -3,6 +3,7 @@
 import { app, protocol, BrowserWindow, ipcMain } from 'electron'
 import { createProtocol } from 'vue-cli-plugin-electron-builder/lib'
 import installExtension, { VUEJS_DEVTOOLS } from 'electron-devtools-installer'
+import { uniq as _uniq } from 'lodash'
 
 import Docker from 'dockerode'
 let docker = new Docker({socketPath: '/var/run/docker.sock'})
@@ -17,9 +18,10 @@ protocol.registerSchemesAsPrivileged([
 async function createWindow() {
   // Create the browser window.
   const win = new BrowserWindow({
-    width: 800,
-    height: 600,
+    width: 1280,
+    height: 720,
     webPreferences: {
+      
       // Use pluginOptions.nodeIntegration, leave this alone
       // See nklayman.github.io/vue-cli-plugin-electron-builder/guide/security.html#node-integration for more info
       nodeIntegration: process.env.ELECTRON_NODE_INTEGRATION
@@ -83,6 +85,16 @@ if (isDevelopment) {
 }
 
 // Docker stuff
+async function getImageList() {
+  const rawImages = await docker.listImages()
+  const imageTags = _uniq(rawImages.flatMap(image => image.RepoTags))
+  return imageTags
+}
+
+async function imageDownloaded(imageName) {
+  return (await getImageList()).includes(imageName)
+}
+
 ipcMain.on('list-containers', (event, arg) => {
   docker.listContainers({all: true}).then((containers) => {
     event.reply('list-containers-result', containers)
@@ -101,7 +113,7 @@ ipcMain.on('start-container', (event, arg) => {
   })
 })
 
-ipcMain.on('create-container', (event, arg) => {
+ipcMain.on('create-container', async (event, arg) => {
   let parsedArgs = JSON.parse(arg)
 
   let parsedPorts = {}
@@ -122,6 +134,10 @@ ipcMain.on('create-container', (event, arg) => {
     parsedEnvs.push(`${env.key}=${env.value}`)
   }
 
+  if (!await imageDownloaded(parsedArgs.image)) {
+    await downloadImage(parsedArgs.image, event)
+  }
+
   docker.createContainer({
     Image: parsedArgs.image,
     name: parsedArgs.name,
@@ -132,6 +148,9 @@ ipcMain.on('create-container', (event, arg) => {
     Env: parsedEnvs,
   }).then((err, container) => {
     event.reply('container-created', container)
+  }).catch(err => {
+    console.log('can no create container')
+    event.reply('container-creation-failed', JSON.stringify(err))
   })
 })
 
@@ -150,3 +169,91 @@ ipcMain.on('delete-container', (event, arg) => {
     event.reply('container-deleted', arg)
   })
 })
+
+// ipcMain.on('download-image', (event, arg) => {
+//   var thisEvent = event
+
+//   docker.pull(arg, (pullErr, stream) => {
+//     if (pullErr) {
+//       thisEvent.reply('image-download-failed', JSON.stringify(pullErr))
+//     } else {
+//       docker.modem.followProgress(stream, onFinished, onProgress)
+
+//       function onFinished(finishedErr, output) {
+//         if (finishedErr) {
+//           thisEvent.reply('image-download-failed', JSON.stringify(finishedErr))
+//         } else {
+//           thisEvent.reply('image-downloaded', arg)
+//         }
+//       }
+
+//       function onProgress(event) {
+//         thisEvent.reply('downloading-image', JSON.stringify(event))
+//       }
+//     }
+//   })
+// })
+
+async function downloadImage(imageName, event = null) {
+  var thisEvent = event
+  const stream = await docker.pull(imageName)
+
+  return new Promise((resolve, reject) => {
+    docker.modem.followProgress(stream, (finishedErr, output) => {
+      if (finishedErr) {
+        console.log('image download no worky')
+        if (thisEvent) thisEvent.reply('image-download-failed', JSON.stringify(finishedErr))
+        return reject(finishedErr)
+      } else {
+        if (thisEvent) thisEvent.reply('image-downloaded', imageName)
+        return resolve(output)
+      }
+    }, (progressEvent) => {
+      console.log(progressEvent)
+      if (thisEvent) thisEvent.reply('downloading-image', JSON.stringify({
+        image: imageName,
+        payload: progressEvent
+      }))
+    })
+  })
+
+  // docker.pull(arg, (pullErr, stream) => {
+  //   if (pullErr) {
+  //     thisEvent.reply('image-download-failed', JSON.stringify(pullErr))
+  //   } else {
+  //     docker.modem.followProgress(stream, onFinished, onProgress)
+
+  //     function onFinished(finishedErr, output) {
+  //       if (finishedErr) {
+  //         thisEvent.reply('image-download-failed', JSON.stringify(finishedErr))
+  //       } else {
+  //         thisEvent.reply('image-downloaded', arg)
+  //       }
+  //     }
+
+  //     function onProgress(event) {
+  //       thisEvent.reply('downloading-image', JSON.stringify(event))
+  //     }
+  //   }
+  // })
+}
+
+// docker.pull('hello-world', (err, stream) => {
+//   // stream.on('data', (chunk) => {
+//   //   console.log(`received ${chunk.length} bytes of data`)
+//   // })
+
+//   // stream.on('end', () => {
+//   //   console.log('no more data.')
+//   // })
+
+//   docker.modem.followProgress(stream, onFinished, onProgress)
+
+//   function onFinished(err, output) {
+//     console.log('done.')
+//   }
+
+//   function onProgress(event) {
+//     console.log(event)
+//   }
+// })
