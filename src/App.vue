@@ -51,6 +51,7 @@
     @active="afterCreateModalOpen"
     contentClass="w-1/2 p-3 rounded"
     mobileClass="p-3"
+    mobileBreakpoint="750px"
   >
     <template v-slot:title>Create container</template>
     <main>
