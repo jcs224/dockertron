@@ -13,10 +13,32 @@
           class="container-list-item mt-2 flex"
         >
           <div 
-            class="flex-1 p-2 rounded-l transition duration-200 ease-in-out"
+            class="flex-1 p-2 rounded-l transition duration-200 ease-in-out flex"
             :class="[ct.State == 'running' ? 'bg-white' : 'bg-gray-400']"
           >
-            {{ ct.Names[0].slice(1) }}
+            <span
+              class="mr-3"
+            >
+              {{ ct.Names[0].slice(1) }}
+            </span>
+            <div v-if="visiblePorts(ct.Id).length > 0">
+              <div v-for="(p, index) in visiblePorts(ct.Id)" :key="index">
+                <div 
+                  class="flex items-stretch"
+                  :class="index > 0 && 'mt-2'"
+                >
+                  <div class="text-sm bg-blue-500 text-white rounded-l-sm px-1">
+                    {{ p.PublicPort }}
+                  </div>
+                  <div class="bg-gray-300">
+                    <i class="fas fa-arrow-right px-1"></i>
+                  </div>
+                  <div class="text-sm bg-blue-500 text-white rounded-r-sm px-1">
+                    {{ p.PrivatePort }}
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
           <button
             class="bg-purple-500 text-white px-2 w-10"
@@ -384,6 +406,17 @@ export default {
 
     afterCreateModalOpen() {
       this.$refs['new-container-name'].focus()
+    },
+
+    visiblePorts(containerID) {
+      let container = this.containers.filter(ct => ct.Id == containerID)[0]
+      let ports = container.Ports
+
+      let filteredPorts = ports.filter(p => p.PublicPort && p.PrivatePort && p.IP && p.IP != '::')
+
+      console.log(filteredPorts)
+
+      return filteredPorts
     }
   }
 }
