@@ -327,7 +327,6 @@ export default {
 
       this.isImageDownloading = true
       this.imageDownloading = parsedArg
-      console.log(this.imageDownloading)
     })
 
     ipcRenderer.on('image-downloaded', () => {
