@@ -414,8 +414,6 @@ export default {
 
       let filteredPorts = ports.filter(p => p.PublicPort && p.PrivatePort && p.IP && p.IP != '::')
 
-      console.log(filteredPorts)
-
       return filteredPorts
     }
   }
