@@ -974,9 +974,9 @@
     mkdirp "^1.0.4"
 
 "@oruga-ui/oruga-next@^0.4.4":
-  version "0.4.4"
-  resolved "https://registry.yarnpkg.com/@oruga-ui/oruga-next/-/oruga-next-0.4.4.tgz#9161779d278ec72f1f6eb5d0e114aeb5a5e153ab"
-  integrity sha512-e/8ZpYHbCL/zQKFWiVlTsBJDuW3bM5ZsWkhSaYQGGTTzKZYif7yzfDShstb3v+0hFX5IZdfYo6eyAqcNWD+1Dw==
+  version "0.4.6"
+  resolved "https://registry.yarnpkg.com/@oruga-ui/oruga-next/-/oruga-next-0.4.6.tgz#1aa1d8615f5520a6838b1fc2496d8069745fb1d4"
+  integrity sha512-aRBN8xtKWoAtR8s8clv+xiGOiL3HhRpp32MlhpCrfPgM7AxO77FOc231+yMJ+gSvYi/Pv+r3UTA70lqfy38hsw==
 
 "@sindresorhus/is@^0.14.0":
   version "0.14.0"
