@@ -70,17 +70,17 @@
   <o-modal
     :active="createContainerDialog"
     @close="createContainerDialog = false"
-    @active="afterCreateModalOpen"
     contentClass="w-1/2 p-3 rounded"
     mobileClass="p-3"
     mobileBreakpoint="750px"
+    :autoFocus="false"
   >
     <template v-slot:title>Create container</template>
     <main>
-      <div>
+      <MountedWrapper @after-mounted="afterCreateModalOpen">
         <label class="block" for="">name</label>
         <input ref="new-container-name" type="text" v-model="newContainer.name" class="bg-gray-300 p-2 w-full rounded">
-      </div>
+      </MountedWrapper>
 
       <div class="mt-2">
         <label class="block" for="">image</label>
@@ -246,8 +246,13 @@
 
 <script>
 import { ipcRenderer } from 'electron'
+import MountedWrapper from './Components/MountedWrapper.vue'
 
 export default {
+
+  components: {
+    MountedWrapper,
+  },
 
   data() {
     return {
