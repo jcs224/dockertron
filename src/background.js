@@ -6,7 +6,7 @@ import installExtension, { VUEJS3_DEVTOOLS } from 'electron-devtools-installer'
 import { uniq as _uniq } from 'lodash'
 
 import Docker from 'dockerode'
-let docker = new Docker({socketPath: '/var/run/docker.sock'})
+let docker = new Docker()
 
 const isDevelopment = process.env.NODE_ENV !== 'production'
 
